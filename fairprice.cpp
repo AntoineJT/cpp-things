@@ -5,7 +5,7 @@
 constexpr int min = 0;
 constexpr int max = 1000;
 
-int random_int() {
+int random_int() noexcept {
     std::random_device rd;
     std::uniform_int_distribution<int> dist(min, max);
     return dist(rd);
