@@ -4,13 +4,13 @@
 #include <iostream>
 #include <limits>
 
-enum Player {
+enum class Player {
     None,
     Circle,
     Cross
 };
 
-enum GameState {
+enum class GameState {
     CircleWinned,
     CrossWinned,
     OnGoing,
@@ -21,11 +21,11 @@ enum GameState {
 using Board = std::array<Player, 9>;
 using Line = std::array<std::size_t, 3>;
 
-constexpr char GetPlayerSymbol(Player player) noexcept {
+constexpr char GetPlayerSymbol(const Player player) noexcept {
     switch (player) {
-        case Circle: return 'O';
-        case Cross: return 'X';
-        case None: 
+        case Player::Circle: return 'O';
+        case Player::Cross: return 'X';
+        case Player::None: 
         default:
             return ' ';
     }
@@ -48,7 +48,7 @@ constexpr std::array<Line, 2> dlines {{
 
 struct Game {
     Game()
-     : m_board(Board { None })
+     : m_board(Board { Player::None })
      , m_currentPlayer(Player::Cross)
      , m_gameState(GameState::OnGoing)
      {}
@@ -71,11 +71,11 @@ struct Game {
                 && middleCellOwner != Player::None;
         }
 
-        GameState UpdateGameState(Player winner) const noexcept {
+        GameState UpdateGameState(const Player winner) const noexcept {
             switch (winner) {
-                case Cross: return GameState::CrossWinned;
-                case Circle: return GameState::CircleWinned;
-                case None:
+                case Player::Cross: return GameState::CrossWinned;
+                case Player::Circle: return GameState::CircleWinned;
+                case Player::None:
                 default:
                     return GameState::OnGoing;
             }
@@ -83,13 +83,13 @@ struct Game {
 
     public:
         void SwitchToOpponent() noexcept {
-            assert(m_currentPlayer != None);
+            assert(m_currentPlayer != Player::None);
             
             switch (m_currentPlayer) {
-                case Cross:
+                case Player::Cross:
                     m_currentPlayer = Player::Circle;
                     break;
-                case Circle:
+                case Player::Circle:
                     m_currentPlayer = Player::Cross;
                     break;
                 default:
@@ -117,48 +117,48 @@ struct Game {
         }
 
         bool InProgress() const noexcept {
-            return m_gameState == OnGoing;
+            return m_gameState == GameState::OnGoing;
         }
 
         std::string WinnerName() const noexcept {
-            assert(!InProgress() && m_gameState != Equality);
+            assert(!InProgress() && m_gameState != GameState::Equality);
             
             switch (m_gameState) {
-                case CircleWinned: return "Circle";
-                case CrossWinned: return "Cross";
-                case Equality:
-                case OnGoing:
+                case GameState::CircleWinned: return "Circle";
+                case GameState::CrossWinned: return "Cross";
+                case GameState::Equality:
+                case GameState::OnGoing:
                 default:
                     return "Invalid";
             }
         }
 
         std::string CurrentPlayerName() const noexcept {
-            assert(m_currentPlayer != None);
+            assert(m_currentPlayer != Player::None);
 
             switch (m_currentPlayer) {
-                case Cross: return "Cross";
-                case Circle: return "Circle";
-                case None:
+                case Player::Cross: return "Cross";
+                case Player::Circle: return "Circle";
+                case Player::None:
                 default:
                     return "Invalid";
             }
         }
 
-        bool CanBePlayed(std::size_t cellIndex) const noexcept {
+        bool CanBePlayed(const std::size_t cellIndex) const noexcept {
             assert(cellIndex < 9);
 
-            return m_board[cellIndex] == None;
+            return m_board[cellIndex] == Player::None;
         }
 
-        void PlayCell(std::size_t cellIndex) noexcept {
+        void PlayCell(const std::size_t cellIndex) noexcept {
             assert(cellIndex < 9);
 
             m_board[cellIndex] = m_currentPlayer;
         }
 
         void UpdateGameState() noexcept {
-            assert(m_gameState == OnGoing);
+            assert(m_gameState == GameState::OnGoing);
             
             // TODO Find a way to avoid to do some code repetition
             for (auto line : hlines) {
@@ -182,7 +182,7 @@ struct Game {
 
             bool equality = true;
             for (auto cellOwner : m_board) {
-                if (cellOwner == None) {
+                if (cellOwner == Player::None) {
                     equality = false;
                     break;
                 }
@@ -222,7 +222,7 @@ int main() {
 
         if (std::cin.eof()) {
             throw std::runtime_error("Input stream has been closed!");
-        } else
+        }
         if (std::cin.fail()) {
             std::cout << "Invalid input. Try again!" << std::endl;
             std::cin.clear();
@@ -250,7 +250,7 @@ int main() {
             game.SwitchToOpponent();
         } else {
             game.PrintBoard();
-            if (game.State() != Equality) {
+            if (game.State() != GameState::Equality) {
                 std::cout << "Player '" << game.WinnerName() << "' won!" << std::endl;
             } else {
                 std::cout << "Equality! No one wins." << std::endl;
