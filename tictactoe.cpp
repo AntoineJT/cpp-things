@@ -2,6 +2,7 @@
 #include <cassert>
 #include <cstdlib>
 #include <iostream>
+#include <limits>
 
 enum Player {
     None,
@@ -20,11 +21,13 @@ enum GameState {
 using Board = std::array<Player, 9>;
 using Line = std::array<std::size_t, 3>;
 
-char GetPlayerSymbol(Player player) noexcept {
+constexpr char GetPlayerSymbol(Player player) noexcept {
     switch (player) {
-        case None: return ' ';
         case Circle: return 'O';
         case Cross: return 'X';
+        case None: 
+        default:
+            return ' ';
     }
 }
 
@@ -72,7 +75,9 @@ struct Game {
             switch (winner) {
                 case Cross: return GameState::CrossWinned;
                 case Circle: return GameState::CircleWinned;
-                case None: return GameState::OnGoing;
+                case None:
+                default:
+                    return GameState::OnGoing;
             }
         }
 
@@ -222,30 +227,33 @@ int main() {
             std::cout << "Invalid input. Try again!" << std::endl;
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            continue;
+        }
+
+        if (input < 0 || input > 9) {
+            std::cout << "Number out of range: 0 to quit, 1-9 to play a cell." << std::endl;
+            continue;
+        }
+        if (input == 0) {
+            exit(EXIT_SUCCESS);
+        }
+        --input; // array bounds are from 0 to 8, input is from 1 to 9
+        if (!game.CanBePlayed(input)) {
+            std::cout << "This cell is already owned! Play another one." << std::endl;
+            continue;
+        }
+
+        game.PlayCell(input);
+        game.UpdateGameState();
+
+        if (game.InProgress()) {
+            game.SwitchToOpponent();
         } else {
-            if (input < 0 || input > 9) {
-                std::cout << "Number out of range: 0 to quit, 1-9 to play a cell." << std::endl;
+            game.PrintBoard();
+            if (game.State() != Equality) {
+                std::cout << "Player '" << game.WinnerName() << "' won!" << std::endl;
             } else {
-                if (input == 0) {
-                    exit(EXIT_SUCCESS);
-                }
-                --input; // array bounds are from 0 to 8, input is from 1 to 9
-                if (!game.CanBePlayed(input)) {
-                    std::cout << "This cell is already owned! Play another one." << std::endl;
-                } else {
-                    game.PlayCell(input);
-                    game.UpdateGameState();
-                    if (!game.InProgress()) {
-                        game.PrintBoard();
-                        if (game.State() == Equality) {
-                            std::cout << "Equality! No one wins." << std::endl;
-                        } else {
-                            std::cout << "Player '" << game.WinnerName() << "' won!" << std::endl;
-                        }
-                    } else {
-                        game.SwitchToOpponent();
-                    }
-                }
+                std::cout << "Equality! No one wins." << std::endl;
             }
         }
     }
