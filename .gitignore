@@ -2,3 +2,6 @@
 .vscode/
 out/
 *.exe
+*.exp
+*.lib
+*.pdb
