@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
         "#include <stdio.h>" "\n" 
         "#include <stdlib.h>" "\n"
         "int main() {" "\n"
-        "char* p = calloc(30000, sizeof(char));";
+        "char* p = calloc(30000, sizeof(char));" "\n";
     
     std::ifstream bfFile { bfFilename, std::ios::binary|std::ios::ate };
     
