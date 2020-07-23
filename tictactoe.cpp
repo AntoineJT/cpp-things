@@ -31,19 +31,18 @@ constexpr char GetPlayerSymbol(const Player player) noexcept {
     }
 }
 
-constexpr std::array<Line, 3> hlines {{ 
+constexpr std::array<Line, 8> lines {{ 
+    // horizontal
     {0, 1, 2}, 
     {3, 4, 5}, 
-    {6, 7, 8} 
-}};
-constexpr std::array<Line, 3> vlines {{ 
+    {6, 7, 8},
+    // vertical
     {0, 3, 6}, 
     {1, 4, 7}, 
-    {2, 5, 8} 
-}};
-constexpr std::array<Line, 2> dlines {{ 
+    {2, 5, 8},
+    // diagonal
     {0, 4, 8}, 
-    {2, 4, 6} 
+    {2, 4, 6}
 }};
 
 struct Game {
@@ -160,20 +159,7 @@ struct Game {
         void UpdateGameState() noexcept {
             assert(m_gameState == GameState::OnGoing);
             
-            // TODO Find a way to avoid to do some code repetition
-            for (auto line : hlines) {
-                if (IsLineOwned(line)) {
-                    m_gameState = UpdateGameState(m_board[line[0]]);
-                    return;
-                }
-            }
-            for (auto line : vlines) {
-                if (IsLineOwned(line)) {
-                    m_gameState = UpdateGameState(m_board[line[0]]);
-                    return;
-                }
-            }
-            for (auto line : dlines) {
+            for (auto line : lines) {
                 if (IsLineOwned(line)) {
                     m_gameState = UpdateGameState(m_board[line[0]]);
                     return;
