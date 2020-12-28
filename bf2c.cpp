@@ -28,8 +28,9 @@ int main(int argc, char *argv[]) {
     std::string code = 
         "#include <stdio.h>" "\n" 
         "#include <stdlib.h>" "\n"
+        "\n"
         "int main() {" "\n"
-        "char* p = calloc(30000, sizeof(char));" "\n";
+        "\t" "char* p = calloc(30000, sizeof(char));" "\n";
     
     std::ifstream bfFile { bfFilename, std::ios::binary|std::ios::ate };
     
@@ -53,7 +54,10 @@ int main(int argc, char *argv[]) {
     }
     bfFile.close();
 
+    std::size_t tabs = 1;
     for (char& c : bfContent) {
+        const std::size_t indent = (c != ']') ? tabs : tabs - 1;
+        code += std::string(indent, '\t');
         switch (c) {
             case '>': 
                 code += "++p;" "\n";
@@ -75,15 +79,17 @@ int main(int argc, char *argv[]) {
                 break;
             case '[':
                 code += "while (*p) {" "\n";
+                ++tabs;
                 break;
             case ']':
                 code += "}" "\n";
+                --tabs;
                 break;
             default: break;
         }
     }
 
-    code += "free(p);" "\n" "}";
+    code += "\t" "free(p);" "\n" "}";
 
     std::ofstream cFile { "output.c" };
     cFile << code << std::endl;
