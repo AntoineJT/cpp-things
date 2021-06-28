@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
     bfFile.close();
 
     std::size_t tabs = 1;
-    for (char& c : bfContent) {
+    for (const char c : bfContent) {
         const std::size_t indent = (c != ']') ? tabs : tabs - 1;
         code += std::string(indent, '\t');
         switch (c) {

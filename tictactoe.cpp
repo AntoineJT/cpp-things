@@ -65,9 +65,12 @@ struct Game {
             #endif
 
             const auto middleCellOwner = m_board[line[1]];
+            if (middleCellOwner == Player::None) {
+                return false;
+            }
+
             return middleCellOwner == m_board[line[0]]
-                && middleCellOwner == m_board[line[2]]
-                && middleCellOwner != Player::None;
+                && middleCellOwner == m_board[line[2]];
         }
 
         GameState UpdateGameState(const Player winner) const noexcept {
@@ -159,7 +162,7 @@ struct Game {
         void UpdateGameState() noexcept {
             assert(m_gameState == GameState::OnGoing);
             
-            for (auto line : lines) {
+            for (const auto& line : lines) {
                 if (IsLineOwned(line)) {
                     m_gameState = UpdateGameState(m_board[line[0]]);
                     return;

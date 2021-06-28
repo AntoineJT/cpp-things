@@ -1,7 +1,23 @@
-.vs/
-.vscode/
-out/
+# Bins
 *.exe
 *.exp
 *.lib
 *.pdb
+
+# Visual Studio
+.vs/
+*.vcxproj
+*.vcxproj.*
+*.sln
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+*.cmake
+
+# Misc
+.vscode/
+out/
+*.dir/
+Debug/
+x64/
