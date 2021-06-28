@@ -14,7 +14,7 @@ enum class GameState {
     CircleWinned,
     CrossWinned,
     OnGoing,
-    Equality
+    Draw
 };
 
 // I read somewhere that this is more idiomatic than typedefs
@@ -123,12 +123,12 @@ struct Game {
         }
 
         std::string WinnerName() const noexcept {
-            assert(!InProgress() && m_gameState != GameState::Equality);
+            assert(!InProgress() && m_gameState != GameState::Draw);
             
             switch (m_gameState) {
                 case GameState::CircleWinned: return "Circle";
                 case GameState::CrossWinned: return "Cross";
-                case GameState::Equality:
+                case GameState::Draw:
                 case GameState::OnGoing:
                 default:
                     return "Invalid";
@@ -177,7 +177,7 @@ struct Game {
                 }
             }
             if (equality) {
-                m_gameState = GameState::Equality;
+                m_gameState = GameState::Draw;
             }
         }
 
@@ -239,10 +239,10 @@ int main() {
             game.SwitchToOpponent();
         } else {
             game.PrintBoard();
-            if (game.State() != GameState::Equality) {
+            if (game.State() != GameState::Draw) {
                 std::cout << "Player '" << game.WinnerName() << "' won!" << std::endl;
             } else {
-                std::cout << "Equality! No one wins." << std::endl;
+                std::cout << "Draw! No one wins." << std::endl;
             }
         }
     }
